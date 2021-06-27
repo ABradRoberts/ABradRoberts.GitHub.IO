@@ -1,5 +1,5 @@
 
-<script src='header.html'></script>
+<object data='header.html'></object>
 
 # whoami
 
