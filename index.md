@@ -1,6 +1,6 @@
 ## Welcome to GitHub Pages
 
-[Home](abradroberts.github.io/home.md) | [whoami](abradroberts/github.io/whoami.md) | [HackTheBox Writeups](abradroberts.github.io/htb-writeups/home.md) | [Research](abradroberts.github.io/reserach/home.md)
+[Home](index) | [whoami](whoami) | [HackTheBox Writeups](../htb-writeups/home) | [Research](../reserach/home)
 
 
 You can use the [editor on GitHub](https://github.com/ABradRoberts/ABradRoberts.github.io/edit/master/README.md) to maintain and preview the content for your website in Markdown files.
