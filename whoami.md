@@ -1,5 +1,5 @@
 
-<object data='header.html'></object>
+<include src='header.html'></include>
 
 # whoami
 
