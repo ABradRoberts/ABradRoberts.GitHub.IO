@@ -4,7 +4,3 @@
     <a href="https://abradroberts.github.io/htb_writeups/index"> HackTheBox Writeups</a> |
     <a href="https://abradroberts.github.io/research/index">  Research</a>
 </p>
-
-# whoami
-
-![Brads Resume](images/Brad_Roberts_Resume.png)
