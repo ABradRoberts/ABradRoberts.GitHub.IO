@@ -11,7 +11,7 @@ My name is Brad and I like to break stuff. At least, that's the idea. I've never
 
 <p align="center">
     <a href="https://LinkedIn.com/in/bradley-roberts">
-        <img alt="LinkedIn" src="https://abradroberts.github.io/images/linkedin_icon.png"
+        <img alt="LinkedIn" src="https://abradroberts.github.io/images/li_icon.png"
         width="32" height="32"/>
     </a>
 </p>
