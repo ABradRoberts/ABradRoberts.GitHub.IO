@@ -14,4 +14,12 @@ My name is Brad and I like to break stuff. At least, that's the idea. I've never
         <img alt="LinkedIn" src="https://abradroberts.github.io/images/li_icon.png"
         width="32" height="32"/>
     </a>
+    <a href="https://Github.com/ABradRoberts">
+        <img alt="GitHub" src="https://abradroberts.github.io/images/gh_icon.png"
+        width="32" height="32"/>
+    </a>
+    <a href="https://app.hackthebox.eu/profile/196643">
+        <img alt="HackTheBox" src="https://abradroberts.github.io/images/htb_icon.png"
+        width="32" height="32"/>
+    </a>
 </p>
