@@ -8,3 +8,12 @@
 # whoami
 
 ![Brads Resume](images/Brad_Roberts_Resume.png)
+
+<p align="center">
+    <a href="https://LinkedIn.com/in/bradley-roberts">
+        <img alt="LinkedIn" src="https://abradroberts.github.io/images/li_icon.png" width="32" height="32"></a>&nbsp;&nbsp;&nbsp;
+    <a href="https://app.hackthebox.eu/profile/196643">
+        <img alt="HackTheBox" src="https://abradroberts.github.io/images/htb_icon.png" width="32" height="32"></a>&nbsp;&nbsp;&nbsp;
+    <a href="https://Github.com/ABradRoberts">
+        <img alt="GitHub" src="https://abradroberts.github.io/images/gh_icon.png" width="32" height="32"></a>&nbsp;&nbsp;&nbsp;
+</p>
