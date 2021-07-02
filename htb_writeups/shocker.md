@@ -5,11 +5,9 @@
     <a href="https://abradroberts.github.io/research/index">  Research</a>
 </p>
 
-# Welcome!
+# Shocker
 
-My name is Brad and I like to break stuff. At least, that's the idea. I've never made a webpage before that I actually kept up to date with so here we go. I'm not great at front end stuff, so jekyll will be my friend here and I'm gonna make tons of "design mistakes" but I don't really care as long as this works.
-
-<!-- Password: TRYHARDER!!! -->
+I'd say "404 page not found" or maybe even a clever "UNAUTHORIZED" or "Try Harder" but you and I both know I just haven't done this yet :(
 
 <p align="center">
     <a href="https://LinkedIn.com/in/bradley-roberts">
