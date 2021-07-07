@@ -14,7 +14,7 @@
 ### Exploit: `ShellShock`
 ### Escalation: `sudo /usr/bin/perl` 
 <br>
-Alright! Welcome to my first writeup, ShellShock was the first vulnerability I ever exploited outside of Metasploit! So this box is super special to me. So, since I'm pretty familiar with this kind of vulnerability, let's do this entire box using ONLY the command line!<br><br>
+Alright! Welcome to my first writeup, ShellShock was the first vulnerability I ever exploited outside of Metasploit! So this box is super special to me. Since I'm pretty familiar with this kind of vulnerability, let's do this entire box using ONLY the command line!<br><br>
 
 # Enumeration
 
