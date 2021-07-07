@@ -18,7 +18,7 @@ I've been wanting to do writeups for HackTheBox but never knew where to start, a
 <p align="left">
     <a href="https://abradroberts.github.io/htb_writeups/shocker">
         <img alt="shocker" src="https://abradroberts.github.io/htb_writeups/images/shocker.png" width="56" height="56"><br>
-        &nbsp;&nbsp;Shocker
+        Shocker
     </a><br>
 </p>
 
