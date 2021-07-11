@@ -7,7 +7,7 @@
 
 # Research
 
-Someday, I'll actually put stuff here. But for now, enjoy the though that I *might* put something here some day :)
+Someday, I'll actually put stuff here. But for now, enjoy the thought that I *might* put something here some day :)
 
 <p align="center">
     <a href="https://LinkedIn.com/in/bradley-roberts">
