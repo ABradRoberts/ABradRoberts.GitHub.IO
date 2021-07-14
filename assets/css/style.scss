@@ -26,15 +26,19 @@ a {
 	text-shadow: none !important;
 }
 body {
-	background: #111927 !important;
-	font-family: 'Dosis', sans-serif !important;
+	background: #1a202b !important;
+  // background: #111927 !important;
+	font-family: 'proxima-nova', sans-serif !important;
 	font-size: 20px !important;
+  font-style: normal;
+  letter-spacing: 0;
+  font-weight: 400;
 }
 
 h1, h2, h3, h4, h5, h6 {
 	text-shadow: none !important;
 	color: #62df50;
-	font-family: 'Dosis', sans-serif !important;
+	font-family: 'proxima-nova', sans-serif !important;
 }
 
 header h1 {
@@ -105,7 +109,7 @@ footer {
   width: 65%;
 }
 
-#about-container p { text-align: center; font-family: 'Dosis', sans-serif; }
+#about-container p { text-align: center; font-family: 'proxima-nova', sans-serif; }
 
 #about-h1 { font-size: 30px; margin-bottom:0; padding-bottom:0; }
 #about-caption {
