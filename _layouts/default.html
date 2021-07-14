@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="{{ site.lang | default: "en-US" }}">
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="{{ '/assets/css/style.css?v=' | append: site.github.build_revision | relative_url }}">
+{% seo %}
+{% if page.thumbnail %}
+    <meta property="og:image" content="{{site.url}}{{ page.thumbnail }}" />
+    {% endif %}
+  </head>
+
+  <body>
+
+    <header>
+      <div class="container">
+        <a id="a-title" class="a-title-overwrite" href="{{ '/' | relative_url }}">
+          <h1>{{ site.title | default: site.github.repository_name }}</h1>
+        </a>
+        <h2>{{ site.description | default: site.github.project_tagline }}</h2>
+        <div id="social-holder"></div>
+          <a href="/"> Home</a> |
+          <a href="/whoami.html">&gt; whoami</a> |
+          <a href="/htb_writeups.html">HackTheBox Writeups</a>
+        </div>
+      </div>
+    </header>
+
+    <div class="container">
+      <section id="main_content">
+        {{ content }}
+      </section>
+    </div>
+
+    <footer>
+      <div class="container" id="footer">
+        <div id="social-holder">
+          <a class="social-icons" href="https://www.linkedin.com/in/bradley-roberts/" target="_blank">
+            <img alt="Linkedin" src="/assets/images/linkedin.png">
+          </a>
+          <a class="social-icons" href="https://app.hackthebox.eu/profile/196643" target="_blank">
+            <img alt="HackTheBox" src="/assets/images/htb.png">
+          </a>
+          <a class="social-icons" href="https://github.com/ABradRoberts/" target="_blank">
+            <img alt="Github" src="/assets/images/github.png">
+          </a>
+      </div>
+    </div>
+    </footer>
+  </body>
+</html>
