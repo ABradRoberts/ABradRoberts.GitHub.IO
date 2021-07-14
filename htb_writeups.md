@@ -1,3 +1,0 @@
----
-layout: htb_writeups
----
