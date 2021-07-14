@@ -1,0 +1,23 @@
+---
+layout: default
+---
+
+<ul>
+  {% for writeup in site.posts %}
+    <li class="writeup-container">
+    	<div class="writeup-holder">
+    		<div class="writeup-thumb">
+		    	{% if writeup.thumbnail %}
+				<img src="{{ writeup.thumbnail }}">
+				{% else %}
+				<img src="/img/default-thumb.webp">
+				{% endif %}
+			</div>
+			<div class="writeup-contents">
+				<small>{{ writeup.date | date: "%-d %B %Y" }}</small>
+      			<a href="{{ writeup.url }}"><h2>{{ writeup.title }}</h2></a>
+      			<p>{{ writeup.excerpt }}</p>
+      		</div>
+    </li>
+  {% endfor %}
+</ul>
