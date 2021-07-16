@@ -4,14 +4,12 @@ layout: default
 
 <ul>
   {% for writeup in site.posts %}
-  	{% if writeup.categories contains "HackTheBox" %}
+  	{% if writeup.categories contains "Book" %}
 		<li class="writeup-container">
 			<div class="writeup-holder">
 				<div class="writeup-thumb">
 					{% if writeup.thumbnail %}
-					<a href="{{ writeup.url }}">
-						<img src="{{ writeup.thumbnail }}" width=256 height=256>
-					</a>
+					<img src="{{ writeup.thumbnail }}">
 					{% else %}
 					<img src="/img/default-thumb.webp">
 					{% endif %}
