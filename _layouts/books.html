@@ -9,7 +9,9 @@ layout: default
 			<div class="writeup-holder">
 				<div class="writeup-thumb">
 					{% if writeup.thumbnail %}
-					<img src="{{ writeup.thumbnail }}">
+					<a href="{{ writeup.url }}">
+						<img src="{{ writeup.thumbnail }}">
+					</a>
 					{% else %}
 					<img src="/img/default-thumb.webp">
 					{% endif %}
