@@ -14,7 +14,7 @@ tags: books,programming
 
 Let me start by stating that this book is legendary. It's extremely well known in the development community and for good reason. The authors made an obvious effort to create a book that's refreshing and geared towards the human programmers out there! 
 
-I don't know about everyone out there, but for me, getting a book that is written in an extremely technical manner can actually get super boring and feel like it's just another textbook - even if the portraied knowledge is incredibly valuable. That's why I loved this book so much, and why I'm guessing it's praised by developers all around the world, it feels like the authors are actually talking to you.
+I don't know about everyone out there, but for me, getting a book that is written in an extremely technical manner can actually get super boring and feel like it's just another textbook - even if the portrayed knowledge is incredibly valuable. That's why I loved this book so much, and why I'm guessing it's praised by developers all around the world, it feels like the authors are actually talking to you.
 
 This book isn't all about programming either, it also applies every-day interaction, such as in the "Don't Repeat Yourself" (DRY) section where they state:
 
@@ -27,7 +27,7 @@ There is so much information to take away from this book, but if I was to choose
 
 ***"Your conscious brain is aware of the problem, but your conscious brain is really pretty dumb (no offense). So it's time to give your real brain, that amazing associative neural net that lurks below your consciousness, some space. You'll be amazed how often the answer will just pop into your head when you deliberately distract yourself."***
 
-That realization - the brain is the world most powerful neural network, just let it do it's thing. I see this all the time, I'll be sitting at work writing an email and - ***BAM*** - I now know how to fix that broken exploit I was working on in HackTheBox, or how to fix that python3 code I was testing last week. It's incredible to realize that there is real psychology and neuroscience studying around this phenomena.
+That realization - the brain is the world's most powerful neural network, just let it do it's thing. I see this all the time, I'll be sitting at work writing an email and - ***BAM*** - I now know how to fix that broken exploit I was working on in HackTheBox, or how to fix that python3 code I was testing last week. It's incredible to realize that there is real psychology and neuroscience studying around this phenomena.
 
 *PSSSTTT - about to take your OSCP examination? or another Offensive Security cert? - take breaks!!! Had I sat there like a bump on a frog the whole 24 hours I would have failed horribly... I paced my garage for over an hour just letting my mind wander and out of nowhere, I had an idea that turned out to be the solution allowing me to pass :) it really does work!*
 
