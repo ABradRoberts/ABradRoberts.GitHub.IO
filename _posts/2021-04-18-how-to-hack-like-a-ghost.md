@@ -1,7 +1,7 @@
 ---
 layout: writeup
 title:  "How To Hack Like A GHOST"
-date:   2021-04-20
+date:   2021-04-18
 categories: Book
 thumbnail: /img/books/hack-like-a-ghost.jpg
 tags: books,cloud,hacking,pentesting
