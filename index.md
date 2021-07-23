@@ -8,5 +8,5 @@ When I'm not trying to break things you can find me reading, hiking (just lookin
 
 My hopes are to have sections for HackTheBox writeups, book reviews, and misc posts about whatever. 
 
-<img alt="resume" src="/img/whoami/me.jpg">
+<img alt="me" src="/img/whoami/me.jpg">
 *Me - Honey dog - a dope snake I found :)*
