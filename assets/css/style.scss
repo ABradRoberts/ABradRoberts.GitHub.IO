@@ -47,7 +47,7 @@ header h1 {
 .container > h2 {
     letter-spacing : 1px !important;
 }
-header h1:before { content: "./ "; font-size: 24px; padding-left: 30px; }
+header h1:before { content: "> "; font-size: 24px; padding-left: 30px; }
 
 #social-holder a {
   display: inline-block;
