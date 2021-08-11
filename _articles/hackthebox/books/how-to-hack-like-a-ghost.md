@@ -1,7 +1,7 @@
 ---
 layout: writeup
 title:  "How To Hack Like A GHOST"
-date:   2021-04-18
+# date:   2021-04-18
 categories: Book
 thumbnail: /img/books/hack-like-a-ghost.jpg
 tags: books,cloud,hacking,pentesting
@@ -9,7 +9,7 @@ tags: books,cloud,hacking,pentesting
  *"Whether you're a security professional or simply a hacking enthusiast, this fast-paced, information-packed,hands-on guide will take you deep inside a real-world attack. Learn what it really means to be a penetration tester."* <br><br>
  [Buy it on Amazon!](https://www.amazon.com/Hack-Like-Ghost-Sparc-Flow/dp/1718501269/)<br>
  [Better yet, Buy it from No Starch Press!](https://nostarch.com/how-hack-ghost)
- 
+
 ---
 
 No Starch Press is known for having "The finest in geek entertainment." Not going to lie, most of the time the books are so dry and technical that I just can't get through them. Not saying the information is bad, it's some of the best information in the world, it can just be dry. This book is 100% an exception.

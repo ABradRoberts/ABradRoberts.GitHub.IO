@@ -1,7 +1,7 @@
 ---
 layout: writeup
 title:  "The Phoenix Project"
-date:   2021-04-20
+# date:   2021-04-20
 categories: Book
 thumbnail: /img/books/the-phoenix-project.jpg
 tags: books,it,devops,business

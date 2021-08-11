@@ -2,26 +2,25 @@
 layout: default
 ---
 
-<ul>
-  {% for writeup in site.posts %}
-  	{% if writeup.categories contains "Book" %}
-		<li class="writeup-container">
-			<div class="writeup-holder">
-				<div class="writeup-thumb">
-					{% if writeup.thumbnail %}
-					<a href="{{ writeup.url }}">
-						<img src="{{ writeup.thumbnail }}">
-					</a>
-					{% else %}
-					<img src="/img/default-thumb.webp">
-					{% endif %}
-				</div>
-				<div class="writeup-contents">
-					<small>{{ writeup.date | date: "%-d %B %Y" }}</small>
-					<a href="{{ writeup.url }}"><h2>{{ writeup.title }}</h2></a>
-					<p>{{ writeup.excerpt }}</p>
-				</div>
-		</li>
+{% for article in site.articles %}
+	{% if article.categories contains "Book" %}
+	<li class="writeup-container">
+		<div class="writeup-holder">
+			<div class="writeup-thumb">
+				{% if article.thumbnail %}
+				<a href="{{ article.url }}">
+					<img src="{{ article.thumbnail }}" width=256 height=324>
+				</a>
+				{% else %}
+				<img src="/img/default-thumb.webp">
+				{% endif %}
+			</div>
+			<div class="writeup-contents">
+				<!-- <small>{{ article.date | date: "%-d %B %Y" }}</small> -->
+				<a href="{{ article.url }}"><h2>{{ article.title }}</h2></a>
+				<p>{{ article.excerpt }}</p>
+			</div>
+	</li>
 	{% endif %}
-  {% endfor %}
-</ul>
+	<br>
+{% endfor %}

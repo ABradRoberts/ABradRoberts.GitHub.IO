@@ -1,7 +1,7 @@
 ---
 layout: writeup
 title:  "The Pragmatic Programmer - 20th Anniversary Edition"
-date:   2021-07-10
+# date:   2021-07-10
 categories: Book
 thumbnail: /img/books/pragmatic-programmer.jpg
 tags: books,programming
