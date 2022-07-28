@@ -21,7 +21,7 @@
 title: Brad's Blog
 author: Brad Roberts
 description: >- # this means to ignore newlines until "baseurl:"
-  Offensive Security Aficionado &#x7C; Husband &#x7C; Puppy Herder &#x7C; Snake Charmer
+  Offensive Security Aficionado &#x7C; Puppy Herder &#x7C; Snake Charmer
 baseurl: "" # the subpath of your site, e.g. /blog
 url: "https://abradroberts.github.io" # the base hostname & protocol for your site, e.g. http://example.com
 github_username: abradroberts
