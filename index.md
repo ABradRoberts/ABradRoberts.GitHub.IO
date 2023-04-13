@@ -2,11 +2,27 @@
 layout: default
 --- 
 
-Hello, my name is Brad Roberts and I love offensive security operations. I'm currently holding the Offensive Security Certified Professional certification and am actively working towards my Offensive Security Web Expert. (stay tuned)
-
-When I'm not trying to break things you can find me reading, hiking (just looking for snakes really...), playing with my beautiful dogs, or sitting around trying to get this website looking nice.
-
-My hopes are to have sections for HackTheBox writeups, book reviews, and misc posts about whatever. 
+Hello, I'm Brad. If you're here you prolly already know me....
 
 <img alt="me" src="/img/whoami/me.jpg">
-*Me - Honey dog - a dope snake I found :)*
+*Me - Hunny - a dope snake I found :)*
+
+<!-- 
+Comments, comments are where it matters
+
+You want to know who I am?
+I'm another statistic in the world of man.
+Just an iteration of Divorced++.
+It wasn't my choice!
+She slept with someone else
+I begged her to come back home regardless
+and she didn't
+
+SHE filed for divorce
+i fought
+
+SHE hired a lawyer... at that point, what can i do??
+So here I am, sitting in my house, alone, bored, and unloved.
+
+--> 
+

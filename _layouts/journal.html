@@ -1,0 +1,26 @@
+---
+layout: default
+---
+
+{% for article in site.articles %}
+	{% if article.categories contains "Journal" %}
+	<li class="writeup-container">
+		<div class="writeup-holder">
+			<div class="writeup-thumb">
+				{% if article.thumbnail %}
+				<a href="{{ article.url }}">
+					<img src="{{ article.thumbnail }}" width=256 height=324>
+				</a>
+				{% else %}
+				<img src="/img/default-thumb.webp">
+				{% endif %}
+			</div>
+			<div class="writeup-contents">
+				<!-- <small>{{ article.date | date: "%-d %B %Y" }}</small> -->
+				<a href="{{ article.url }}"><h2>{{ article.title }}</h2></a>
+				<p>{{ article.excerpt }}</p>
+			</div>
+	</li>
+	{% endif %}
+	<br>
+{% endfor %}
